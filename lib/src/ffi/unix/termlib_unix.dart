@@ -52,7 +52,8 @@ class TermLibUnix implements TermLib {
       ..ref.c_ispeed = origTermIOS.c_ispeed
       ..ref.c_oflag = origTermIOS.c_ospeed;
 
-    tcsetattr(STDIN_FILENO, TCSANOW, newTermIOSPointer);
+    // tcsetattr(STDIN_FILENO, TCSANOW, newTermIOSPointer);
+    tcsetattr(STDIN_FILENO, TCSADRAIN, newTermIOSPointer);
 
     calloc.free(newTermIOSPointer);
   }
@@ -60,7 +61,8 @@ class TermLibUnix implements TermLib {
   @override
   void disableRawMode() {
     if (nullptr == _origTermIOSPointer.cast()) return;
-    tcsetattr(STDIN_FILENO, TCSANOW, _origTermIOSPointer);
+    // tcsetattr(STDIN_FILENO, TCSANOW, _origTermIOSPointer);
+    tcsetattr(STDIN_FILENO, TCSADRAIN, _origTermIOSPointer);
   }
 
   TermLibUnix() {
