@@ -503,9 +503,16 @@ class Console {
       key = Key.control(ControlCharacter.backspace);
     } else if (codeUnit == 0x00 || (codeUnit >= 0x1c && codeUnit <= 0x1f)) {
       key = Key.control(ControlCharacter.unknown);
+      // print('keys here 1');
     } else {
       // assume other characters are printable
-      key = Key.printable(String.fromCharCode(codeUnit));
+      //handle
+      if (!(0x20 <= codeUnit && codeUnit <= 0x7E)) {
+        key = Key.printable(systemEncoding
+            .decode([codeUnit, stdin.readByteSync(), stdin.readByteSync()]));
+      } else {
+        key = Key.printable(String.fromCharCode(codeUnit));
+      }
     }
     rawMode = false;
     return key;
@@ -585,6 +592,7 @@ class Console {
           case ControlCharacter.arrowLeft:
           case ControlCharacter.ctrlB:
             index = index > 0 ? index - 1 : index;
+
             break;
           case ControlCharacter.arrowUp:
             if (_scrollbackBuffer != null) {
@@ -604,6 +612,7 @@ class Console {
           case ControlCharacter.arrowRight:
           case ControlCharacter.ctrlF:
             index = index < buffer.length ? index + 1 : index;
+
             break;
           case ControlCharacter.wordLeft:
             if (index > 0) {
@@ -648,9 +657,21 @@ class Console {
       cursorPosition = Coordinate(screenRow, screenColOffset);
       eraseCursorToEnd();
       write(buffer); // allow for backspace condition
-      cursorPosition = Coordinate(screenRow, screenColOffset + index);
+      cursorPosition = Coordinate(screenRow,
+          screenColOffset + getLength(buffer.substring(0, index))); //index
 
       if (callback != null) callback(buffer, key);
     }
+  }
+
+  int getLength(final String buffer) {
+    int uchars =
+        RegExp(r"[\u4e00-\u9fff]", unicode: true).allMatches(buffer).length;
+
+    return buffer.length + uchars;
+  }
+
+  bool isChinese(final String buff) {
+    return RegExp(r"[\u4e00-\u9fff]", unicode: true).hasMatch(buff);
   }
 }
