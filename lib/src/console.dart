@@ -546,9 +546,10 @@ class Console {
     var index = 0; // cursor position relative to buffer, not screen
 
     final screenRow = cursorPosition!.row;
-    final screenColOffset = cursorPosition!.col;
+    final leadingColOffset = cursorPosition!.col;
 
-    final bufferMaxLength = windowWidth - screenColOffset - 3;
+    //fixme
+    final bufferMaxLength = windowWidth * 6;
 
     while (true) {
       final key = readKey();
@@ -654,11 +655,19 @@ class Console {
         }
       }
 
-      cursorPosition = Coordinate(screenRow, screenColOffset);
-      eraseCursorToEnd();
+      //fixme
+      int rowOff = (getLength(buffer.substring(0, index)) + leadingColOffset) ~/
+          windowWidth;
+      int colOff = (getLength(buffer.substring(0, index)) + leadingColOffset) %
+          windowWidth;
+      for (int i = 0; i <= rowOff; i++) {
+        cursorPosition =
+            Coordinate(screenRow + i, i == 0 ? leadingColOffset : 0);
+        eraseCursorToEnd();
+      }
+      cursorPosition = Coordinate(screenRow, leadingColOffset);
       write(buffer); // allow for backspace condition
-      cursorPosition = Coordinate(screenRow,
-          screenColOffset + getLength(buffer.substring(0, index))); //index
+      cursorPosition = Coordinate(screenRow + rowOff, colOff); //index
 
       if (callback != null) callback(buffer, key);
     }
@@ -671,7 +680,7 @@ class Console {
     return buffer.length + uchars;
   }
 
-  bool isChinese(final String buff) {
-    return RegExp(r"[\u4e00-\u9fff]", unicode: true).hasMatch(buff);
-  }
+  // bool isChinese(final String buff) {
+  //   return RegExp(r"[\u4e00-\u9fff]", unicode: true).hasMatch(buff);
+  // }
 }

@@ -16,9 +16,10 @@ const prompt = '>>> ';
 // as a test of the Console class capabilities
 
 void main() {
-  console.write('The ');
+  console.write('Sed for ');
   console.setForegroundColor(ConsoleColor.brightYellow);
-  console.writeLine('Console.readLine()');
+  console.writeLine('Markword!');
+  console.resetColorAttributes();
 
   while (true) {
     console.write(prompt);
