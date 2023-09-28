@@ -679,8 +679,9 @@ class Console {
   }
 
   int getLength(final String buffer) {
-    int uchars =
-        RegExp(r"[\u4e00-\u9fff]", unicode: true).allMatches(buffer).length;
+    int uchars = RegExp(r"\p{Script=Hani}|[、；：，！。]", unicode: true)
+        .allMatches(buffer)
+        .length;
 
     return buffer.length + uchars;
   }
