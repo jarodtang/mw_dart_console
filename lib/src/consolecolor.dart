@@ -22,7 +22,8 @@ enum ConsoleColor {
   brightBlue('\x1b[94m', '\x1b[104m'),
   brightMagenta('\x1b[95m', '\x1b[105m'),
   brightCyan('\x1b[96m', '\x1b[106m'),
-  brightWhite('\x1b[97m', '\x1b[107m');
+  brightWhite('\x1b[97m', '\x1b[107m'),
+  underscore('\x1b[4m', '\x1b[4m');
 
   final String ansiSetForegroundColorSequence;
   final String ansiSetBackgroundColorSequence;

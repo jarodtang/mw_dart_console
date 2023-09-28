@@ -541,12 +541,17 @@ class Console {
       {bool cancelOnBreak = false,
       bool cancelOnEscape = false,
       bool cancelOnEOF = false,
-      void Function(String text, Key lastPressed)? callback}) {
-    var buffer = '';
-    var index = 0; // cursor position relative to buffer, not screen
+      void Function(String text, Key lastPressed)? callback,
+      String? prefill}) {
+    var buffer = prefill ?? '';
+    var index = buffer.length; // cursor position relative to buffer, not screen
 
     final screenRow = cursorPosition!.row;
     final leadingColOffset = cursorPosition!.col;
+
+    cursorPosition = Coordinate(screenRow, leadingColOffset);
+    write(buffer); // allow for backspace condition
+    // cursorPosition = Coordinate(screenRow + rowOff, colOff); //index
 
     //fixme
     final bufferMaxLength = windowWidth * 6;
